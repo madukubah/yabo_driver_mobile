@@ -7,15 +7,14 @@ import 'package:yabo_bank/data/network/ApiEndPoint.dart';
 import 'package:yabo_bank/data/network/AppApiHelper.dart';
 import 'package:yabo_bank/data/preferences/AppPreferenceHelper.dart';
 import 'package:yabo_bank/model/User.dart';
+import 'package:yabo_bank/module/FIXLImage.dart';
 import 'package:yabo_bank/template/form/MyForm.dart';
 import 'package:yabo_bank/template/form/MyFormBuilder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'interactor/ProfileMVPInteractor.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image/image.dart' as _image;
 
 class Profile extends StatefulWidget {
   @override
@@ -28,6 +27,10 @@ class _ProfileState extends State<Profile>
   String pageName = "Profil";
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   ProfilePresenter<ProfileMVPView, ProfileMVPInteractor> presenter;
+
+  static const PROFILE_PHOTO = 1;
+  static const IDENTITY_PHOTO = 2;
+  FIXLImage imageHandler = FIXLImage();
 
   List<MyForm> dataForm = List();
 
@@ -50,8 +53,6 @@ class _ProfileState extends State<Profile>
 
   requestWritePermission() async {
     PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-        // await PermissionHandler .requestPermission(
-        //     Permission.WriteExternalStorage);
     if (permission == PermissionStatus.granted) {
       setState(() {
         _allowWriteFile = true;
@@ -137,9 +138,7 @@ class _ProfileState extends State<Profile>
                                         ),
                                       ),
                                       onPressed: () {
-                                        _getImage(context, ImageSource.gallery);
-                                        // _openImagePickerModal( context );
-                                        print("CAMERA");
+                                       _openImagePickerModal( context, PROFILE_PHOTO );
                                       },
                                     )
                                   ],
@@ -263,9 +262,7 @@ class _ProfileState extends State<Profile>
                                         borderRadius:
                                             new BorderRadius.circular(20.0)),
                                     onPressed: () {
-                                      _getIdentityImage(
-                                          context, ImageSource.gallery);
-                                      // _openImagePickerModal( context );
+                                      _openImagePickerModal( context, IDENTITY_PHOTO );
                                       print("CAMERA");
                                     },
                                   ),
@@ -427,70 +424,41 @@ class _ProfileState extends State<Profile>
       this._status = true;
     });
   }
+  void sendImageProfile( ImageSource source ){
 
-  //Image Upload
-  void _getImage(BuildContext context, ImageSource source) async {
-    File image = await ImagePicker.pickImage(source: source);
-    // // Closes the bottom sheet
-    // Navigator.pop(context);
-    if (image != null) {
-      _image.Image imageFile = _image.decodeJpg(image.readAsBytesSync());
-
-      _image.Image thumbnail = _image.copyResize(imageFile, width: 500);
-
-      Directory appDocDirectory = await getApplicationDocumentsDirectory();
-      print(appDocDirectory.path);
-      print(Directory.current.path);
-
-      // return;
-      // new Directory(Directory.current.path +'k-pasar').create(recursive: true)
-      new Directory(appDocDirectory.path + '/yabo_bank').create(recursive: true)
-          // The created directory is returned as a Future.
-          .then((Directory directory) {
-        File(directory.path + '/thumbnail-test.png')
-            .writeAsBytesSync(_image.encodePng(thumbnail));
-
-        File imageThumbnail = File(directory.path + '/thumbnail-test.png');
-
-        presenter.uploadImage(imageThumbnail);
-        print('Path of New Dir: ' + directory.path);
-      });
-    } else
-      print("tidak ada gambar");
+    imageHandler.getImage(source, 
+      start:(){
+        this.showProgressCircle();
+      } ,
+      success:( File image ){
+        this.hideProgressCircle();
+        presenter.uploadImage(image);
+      } ,
+      failed:( String message ){
+        this.hideProgressCircle();
+        this.showMessage( message, 0);
+      } ,
+    );
   }
 
-  //Image Upload
-  void _getIdentityImage(BuildContext context, ImageSource source) async {
-    File image = await ImagePicker.pickImage(source: source);
-    // // Closes the bottom sheet
-    // Navigator.pop(context);
-    if (image != null) {
-      _image.Image imageFile = _image.decodeJpg(image.readAsBytesSync());
+  void sendImageIdentity( ImageSource source ){
 
-      _image.Image thumbnail = _image.copyResize(imageFile, width: 500);
-
-      Directory appDocDirectory = await getApplicationDocumentsDirectory();
-      print(appDocDirectory.path);
-      print(Directory.current.path);
-
-      // return;
-      // new Directory(Directory.current.path +'k-pasar').create(recursive: true)
-      new Directory(appDocDirectory.path + '/yabo_bank').create(recursive: true)
-          // The created directory is returned as a Future.
-          .then((Directory directory) {
-        File(directory.path + '/thumbnail-test.png')
-            .writeAsBytesSync(_image.encodePng(thumbnail));
-
-        File imageThumbnail = File(directory.path + '/thumbnail-test.png');
-
-        presenter.uploadIdentityPhoto(imageThumbnail);
-        print('Path of New Dir: ' + directory.path);
-      });
-    } else
-      print("tidak ada gambar");
+    imageHandler.getImage(source, 
+      start:(){
+        this.showProgressCircle();
+      } ,
+      success:( File image ){
+        this.hideProgressCircle();
+        presenter.uploadIdentityPhoto(image);
+      } ,
+      failed:( String message ){
+        this.hideProgressCircle();
+        this.showMessage( message, 0);
+      } ,
+    );
   }
 
-  void _openImagePickerModal(BuildContext context) {
+  void _openImagePickerModal(BuildContext context, int imageType ) {
     final flatButtonColor = Theme.of(context).primaryColor;
     print('Image Picker Modal Called');
     showModalBottomSheet(
@@ -502,7 +470,7 @@ class _ProfileState extends State<Profile>
             child: Column(
               children: <Widget>[
                 Text(
-                  'Pick an image',
+                  'Ambil Gambar',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
@@ -510,16 +478,34 @@ class _ProfileState extends State<Profile>
                 ),
                 FlatButton(
                   textColor: flatButtonColor,
-                  child: Text('Use Camera'),
+                  child: Text('Gunakan Kamera'),
                   onPressed: () {
-                    _getImage(context, ImageSource.camera);
+                    Navigator.pop(context);
+                    switch( imageType )
+                    {
+                      case PROFILE_PHOTO :
+                        sendImageProfile( ImageSource.camera );
+                        break;
+                      case IDENTITY_PHOTO :
+                        sendImageIdentity( ImageSource.camera );
+                        break;
+                    }
                   },
                 ),
                 FlatButton(
                   textColor: flatButtonColor,
-                  child: Text('Use Gallery'),
+                  child: Text('Buka Galeri'),
                   onPressed: () {
-                    _getImage(context, ImageSource.gallery);
+                    Navigator.pop(context);
+                    switch( imageType )
+                    {
+                      case PROFILE_PHOTO :
+                        sendImageProfile( ImageSource.gallery );
+                        break;
+                      case IDENTITY_PHOTO :
+                        sendImageIdentity( ImageSource.gallery );
+                        break;
+                    }
                   },
                 ),
               ],

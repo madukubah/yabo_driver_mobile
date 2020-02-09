@@ -2,19 +2,18 @@ import 'dart:io';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:yabo_bank/activity/request_add/presenter/RequestAddPresenter.dart';
 import 'package:yabo_bank/activity/request_add/view/RequestAddMVPView.dart';
 import 'package:flutter/material.dart';
 import 'package:yabo_bank/data/network/AppApiHelper.dart';
 import 'package:yabo_bank/data/preferences/AppPreferenceHelper.dart';
+import 'package:yabo_bank/module/FIXLImage.dart';
 import 'package:yabo_bank/template/form/MyForm.dart';
 import 'package:yabo_bank/template/form/MyFormBuilder.dart';
 import 'package:yabo_bank/util/AppConstants.dart';
 
 import 'interactor/RequestAddInteractor.dart';
 import 'interactor/RequestAddMVPInteractor.dart';
-import 'package:image/image.dart' as _image;
 
 class RequestAdd extends StatefulWidget {
   @override
@@ -41,6 +40,8 @@ class _RequestAddState extends State<RequestAdd> implements RequestAddMVPView {
     presenter = RequestAddPresenter<RequestAddMVPView, RequestAddMVPInteractor>(
         interactor);
   }
+
+  FIXLImage imageHandler = FIXLImage();
 
   @override
   void initState() {
@@ -84,10 +85,13 @@ class _RequestAddState extends State<RequestAdd> implements RequestAddMVPView {
         children: <Widget>[
           Visibility(
             visible: isMessageShowed,
-            child: Center(
-              child: Text(
-                "$message",
-                style: TextStyle(color: messageColor),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  "$message",
+                  style: TextStyle(color: messageColor),
+                ),
               ),
             ),
           ),
@@ -113,7 +117,6 @@ class _RequestAddState extends State<RequestAdd> implements RequestAddMVPView {
               onPressed: () {
                 // _getImage(context, ImageSource.gallery);
                 _openImagePickerModal( context );
-                print("CAMERA");
               },
             ),
           ),
@@ -139,10 +142,27 @@ class _RequestAddState extends State<RequestAdd> implements RequestAddMVPView {
       ),
     );
   }
+  void getImage( ImageSource source ){
+
+    imageHandler.getImage(source, 
+      start:(){
+        this.showProgress();
+      } ,
+      success:( File image ){
+        this.hideProgress();
+        setState(() {
+          this._imageFile = image;
+        });
+      } ,
+      failed:( String message ){
+        this.hideProgress();
+        this.showMessage( message, 0);
+      } ,
+    );
+  }
 
   void _openImagePickerModal(BuildContext context) {
     final flatButtonColor = Theme.of(context).primaryColor;
-    print('Image Picker Modal Called');
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -163,7 +183,8 @@ class _RequestAddState extends State<RequestAdd> implements RequestAddMVPView {
                   child: Text('Gunakan Kamera'),
                   onPressed: () {
                       Navigator.pop(context);
-                      _getImage(context, ImageSource.camera);
+                      // presenter.getImage( ImageSource.camera );
+                      getImage(ImageSource.camera);
                   },
                 ),
                 FlatButton(
@@ -171,45 +192,14 @@ class _RequestAddState extends State<RequestAdd> implements RequestAddMVPView {
                   child: Text('Buka Galeri'),
                   onPressed: () {
                       Navigator.pop(context);
-                      _getImage(context, ImageSource.gallery);
+                      // presenter.getImage( ImageSource.gallery );
+                      getImage(ImageSource.gallery);
                   },
                 ),
               ],
             ),
           );
         });
-  }
-
-  void _getImage(BuildContext context, ImageSource source) async {
-    File image = await ImagePicker.pickImage(source: source);
-    // // Closes the bottom sheet
-
-    if (image != null) {
-      _image.Image imageFile = _image.decodeJpg(image.readAsBytesSync());
-
-      _image.Image thumbnail = _image.copyResize(imageFile, width: 500);
-
-      Directory appDocDirectory = await getApplicationDocumentsDirectory();
-      print(appDocDirectory.path);
-      print(Directory.current.path);
-
-      new Directory(appDocDirectory.path + '/yabo_bank').create(recursive: true)
-          // The created directory is returned as a Future.
-          .then((Directory directory) {
-        var name = DateTime.now().millisecondsSinceEpoch;
-        File(directory.path + '/$name.png')
-            .writeAsBytesSync(_image.encodePng(thumbnail));
-
-        File imageThumbnail = File(directory.path + '/$name.png');
-
-        setState(() {
-          this._imageFile = imageThumbnail;
-        });
-        // presenter.uploadImage(imageThumbnail);
-        print('Path of New Dir: ' + directory.path);
-      });
-    } else
-      print("tidak ada gambar");
   }
 
   @override
@@ -245,4 +235,12 @@ class _RequestAddState extends State<RequestAdd> implements RequestAddMVPView {
       ),
     );
   }
+
+  @override
+  void onImageLoad(File image) {
+    setState(() {
+      this._imageFile = image;
+    });
+  }
 }
+ 
