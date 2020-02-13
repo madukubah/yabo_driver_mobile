@@ -9,5 +9,4 @@ abstract class ProfileMVPInteractor extends MVPInteractor {
   
   Future<ApiResponse> doServerUpdateUser( dynamic userData );
   Future<ApiResponse> doUploadImage(File image);
-  Future<ApiResponse> doUploadIdentityPhoto(File image);
 }

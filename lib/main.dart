@@ -5,7 +5,6 @@ import 'activity/profile/Profile.dart';
 import 'activity/splash/SplashScreen.dart';
 import 'activity/main/Home.dart';
 import 'activity/ui/MainPage.dart';
-import 'activity/ui/ProfileTab.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,22 +13,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Yabo Bank',
+      title: 'SISA DRIVER',
       theme: ThemeData(
+        fontFamily: 'Ubuntu',
         primarySwatch: Colors.blue,
       ),
-      // home: new ProfileTab(),
+      // home: new InvoiceCreate(),
       home: new SplashScreen(),
       routes: <String, WidgetBuilder>{
         '/Home': (BuildContext context) => new Home(  ) ,
         '/LoginPage': (BuildContext context) => new LoginPage(  ),
         '/RegisterPage': (BuildContext context) => new RegisterPage(  ),
-        '/RegisterPage': (BuildContext context) => new RegisterPage(  ),
         '/Profile': (BuildContext context) => new Profile(  ),
         '/Main': (BuildContext context) => new MainPage(  ),
       },
       onGenerateRoute : (settings) {
-        
       }
     );
   }

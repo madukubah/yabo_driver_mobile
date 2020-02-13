@@ -37,11 +37,4 @@ class ProfileInteractor extends BaseInteractor implements ProfileMVPInteractor
     });
   }
 
-  @override
-  Future<ApiResponse> doUploadIdentityPhoto(File image) {
-    return this.apiHelper.performUserUploadIdentityPhoto(image).then( ( ApiResponse response ) {
-      return response;
-    });
-  }
-
 }

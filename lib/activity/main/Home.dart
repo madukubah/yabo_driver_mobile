@@ -1,13 +1,9 @@
 import 'package:yabo_bank/activity/main/presenter/HomePresenter.dart';
 import 'package:yabo_bank/activity/main/view/HomeMVPView.dart';
-import 'package:yabo_bank/activity/mutation/MutationPage.dart';
+import 'package:yabo_bank/activity/pickup/PickUpPage.dart';
 import 'package:yabo_bank/activity/request/RequestPage.dart';
-import 'package:yabo_bank/activity/ui/MutationTab.dart';
-import 'package:yabo_bank/activity/ui/RequestTab.dart';
 import 'package:yabo_bank/data/network/AppApiHelper.dart';
 import 'package:yabo_bank/data/preferences/AppPreferenceHelper.dart';
-import 'package:yabo_bank/template/drawer/Menu.dart';
-import 'package:yabo_bank/template/drawer/PlainDrawer.dart';
 import 'package:yabo_bank/util/AppConstants.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +34,7 @@ class _HomeState extends State<Home>
   void initState() {
     super.initState();
     // Initialize the Tab Controller
-    controller = TabController(length: 3, vsync: this);
+    controller = TabController(length: 2, vsync: this);
     controller.addListener(_handleTabSelection);
   }
 
@@ -54,7 +50,7 @@ class _HomeState extends State<Home>
       appBar: new AppBar(
         backgroundColor: AppColor.PRIMARY,
         title: new Text("${AppConstants.APP_NAME}"),
-        actions: controller.index != 2
+        actions: controller.index != 1
             ? null
             : <Widget>[
                 IconButton(
@@ -67,7 +63,7 @@ class _HomeState extends State<Home>
       ),
       body: TabBarView(
         // Add tabs as widgets
-        children: <Widget>[MutationPage(), RequestPage(), Profile()],
+        children: <Widget>[ PickUpPage(), Profile()],
         // set the controller
         controller: controller,
       ),
@@ -77,11 +73,6 @@ class _HomeState extends State<Home>
         // set the tab bar as the child of bottom navigation bar
         child: TabBar(
           tabs: <Tab>[
-            Tab(
-              // set icon to the tab
-              icon: Icon(Icons.credit_card),
-              text: 'Mutasi',
-            ),
             Tab(
               icon: Icon(Icons.airport_shuttle),
               text: 'Penjemputan',

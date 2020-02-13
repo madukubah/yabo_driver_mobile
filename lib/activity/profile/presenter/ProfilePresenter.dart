@@ -75,27 +75,4 @@ class ProfilePresenter < V extends ProfileMVPView , I extends ProfileMVPInteract
     });
   }
 
-  @override
-  void uploadIdentityPhoto(File image) {
-     
-    this.getView().showProgressCircle();
-    interactor.doUploadIdentityPhoto( image ).then( ( ApiResponse response ) {
-          if( response == null ) return;
-
-          if( response.success )   
-          {
-            interactor.updateUserInSharedPref( response, LoggedInMode.LOGGED_IN_MODE_SERVER );
-            this.getView().onUserLoad( response.data );
-          }else{
-            this.getUser();
-          }
-          
-          if( response.success )   
-            this.getView().showMessage(  response.message, 1 );
-          else
-            this.getView().showMessage(  response.message, 0 );
-          
-          this.getView().hideProgressCircle();
-    });
-  } 
 }

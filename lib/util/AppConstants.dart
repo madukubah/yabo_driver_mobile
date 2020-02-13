@@ -4,7 +4,7 @@ class AppConstants
 {
   static const LOGIN_FAILURE = 1004;
   static const NULL_INDEX = -1;
-  static const APP_NAME = "SISA";
+  static const APP_NAME = "SISA Driver";
 }
 
  enum LoggedInMode {
@@ -15,6 +15,6 @@ class AppConstants
 }
 
 class AppColor{
-  static const Color PRIMARY = Colors.orangeAccent;
+  static const Color PRIMARY = Colors.orange;
   static const Color SECONDARY = Colors.blueAccent;
 }

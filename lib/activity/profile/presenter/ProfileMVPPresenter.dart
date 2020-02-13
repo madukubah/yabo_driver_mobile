@@ -9,6 +9,4 @@ abstract class ProfileMVPPresenter < V extends ProfileMVPView , I extends Profil
     void getUser(  );
     void updateUser( dynamic userData );
     void uploadImage(File image);
-    void uploadIdentityPhoto(File image);
-    // Future<Map<String, dynamic>> _uploadImage(File image);
 }

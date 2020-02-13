@@ -24,32 +24,32 @@ class _RegisterPageState extends State<RegisterPage>
         type: MyForm.TYPE_TEXT,
         name: "name",
         label: "Nama Lengkap",
-        value: ""),
+        value: "name"),
     MyForm(
         type: MyForm.TYPE_EMAIL,
         name: "email",
         label: "Email",
-        value: ""),
+        value: "alan@gmail.com"),
     MyForm(
         type: MyForm.TYPE_NUMBER,
         name: "phone",
         label: "NO HP",
-        value: ""),
+        value: "081342989100"),
     MyForm(
         type: MyForm.TYPE_TEXT,
         name: "address",
         label: "Alamat", 
-        value: ""),
+        value: "alamat"),
     MyForm(
         type: MyForm.TYPE_PASSWORD,
         name: "password",
         label: "Password",
-        value: ""),
+        value: "081342989100"),
     MyForm(
         type: MyForm.TYPE_PASSWORD,
         name: "c_password",
         label: "Konfirmasi Password",
-        value: ""),
+        value: "081342989100"),
   ];
   bool isMessageShowed = false;
   String message = "";

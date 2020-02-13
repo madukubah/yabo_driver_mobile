@@ -2,7 +2,6 @@ import 'package:yabo_bank/activity/request/interactor/RequestPageInteractor.dart
 import 'package:yabo_bank/activity/request/presenter/RequestPagePresenter.dart';
 import 'package:yabo_bank/activity/request/view/RequestPageMVPView.dart';
 import 'package:flutter/material.dart';
-import 'package:yabo_bank/activity/request_add/RequestAdd.dart';
 import 'package:yabo_bank/model/ProcessedRequest.dart';
 import 'package:yabo_bank/model/Request.dart';
 import 'package:yabo_bank/widget/ProcessedRequestWidget.dart';
@@ -144,27 +143,7 @@ class _RequestPageState extends State<RequestPage>
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {  
-              goToRequestAdd(  );
-          },
-          backgroundColor: Colors.blue,
-          tooltip: 'Increment',
-          child: Icon(Icons.add),
-        ),
       );
-  }
-
-  void goToRequestAdd(  ) async {
-    // print("$itemId");
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RequestAdd(),
-      ),
-    );
-    if( result != null )
-      presenter.getRequests();
   }
 
   @override

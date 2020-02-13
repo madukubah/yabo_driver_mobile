@@ -22,4 +22,10 @@ class ApiEndPoint
   static const CREATE_REQUEST = BASE_URL+"requests";
   static const DELETE_REQUEST = BASE_URL+"requests";
 
+  static const GET_PICKUPS    = BASE_URL+"pickups";
+
+  static const GET_PRICELIST  = BASE_URL+"pricelists";
+
+  static const CREATE_TRANSACTION  = BASE_URL+"invoices";
+
 }

@@ -220,53 +220,6 @@ class _ProfileState extends State<Profile>
                                   ),
                                 ),
                                 !_status ? _getActionButtons() : new Container(),
-                                SizedBox(height: 16.0),
-                                Center(
-                                  child: Text(
-                                    'Foto KTP',
-                                    style: style15,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: this.identityPhotoFile == null
-                                      ? Image.network(
-                                          ApiEndPoint.CUSTOMER_IDENTITY_PHOTO +
-                                              "/$identityPhoto",
-                                          fit: BoxFit.cover,
-                                          height: 200.0,
-                                          alignment: Alignment.topCenter,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                        )
-                                      : Image.file(
-                                          identityPhotoFile,
-                                          fit: BoxFit.cover,
-                                          height: 200.0,
-                                          alignment: Alignment.topCenter,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                        ),
-                                ),
-                                SizedBox(height: 8.0),
-                                Center(
-                                  child: RaisedButton(
-                                    color: Colors.blue,
-                                    child: Text(
-                                      'Ganti KTP',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    shape: new RoundedRectangleBorder(
-                                        borderRadius:
-                                            new BorderRadius.circular(20.0)),
-                                    onPressed: () {
-                                      _openImagePickerModal( context, IDENTITY_PHOTO );
-                                      print("CAMERA");
-                                    },
-                                  ),
-                                ),
                               ],
                             ),
                     ),
@@ -441,22 +394,6 @@ class _ProfileState extends State<Profile>
     );
   }
 
-  void sendImageIdentity( ImageSource source ){
-
-    imageHandler.getImage(source, 
-      start:(){
-        this.showProgressCircle();
-      } ,
-      success:( File image ){
-        this.hideProgressCircle();
-        presenter.uploadIdentityPhoto(image);
-      } ,
-      failed:( String message ){
-        this.hideProgressCircle();
-        this.showMessage( message, 0);
-      } ,
-    );
-  }
 
   void _openImagePickerModal(BuildContext context, int imageType ) {
     final flatButtonColor = Theme.of(context).primaryColor;
@@ -487,7 +424,6 @@ class _ProfileState extends State<Profile>
                         sendImageProfile( ImageSource.camera );
                         break;
                       case IDENTITY_PHOTO :
-                        sendImageIdentity( ImageSource.camera );
                         break;
                     }
                   },
@@ -503,7 +439,6 @@ class _ProfileState extends State<Profile>
                         sendImageProfile( ImageSource.gallery );
                         break;
                       case IDENTITY_PHOTO :
-                        sendImageIdentity( ImageSource.gallery );
                         break;
                     }
                   },
